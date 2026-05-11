@@ -1,0 +1,16 @@
+##Crear Integrante
+curl -X POST http://localhost:8080/integrantes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id_integrante_liga": "juan123",
+    "secret_pass": "123456",
+    "nombre_completo": "Juan Pérez",
+    "fotografia": "",
+    "fecha_nacimiento": "2000-01-01T00:00:00Z",
+    "auditoria_id": 1,
+    "activo": true
+  }'
+
+  ##Listar Integrantes
+  
+curl http://localhost:8080/integrantes

@@ -1,0 +1,34 @@
+##crear temporada
+curl -X POST http://localhost:8080/temporadas \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nombre_temp": "Clausura 2025",
+    "periodo": "2025-1",
+    "fecha_inicio": "2025-01-10T00:00:00Z",
+    "fecha_fin": "2025-06-10T00:00:00Z",
+    "auditoria_id": 1,
+    "activo": true
+  }'
+
+
+##Obtener todas
+
+curl http://localhost:8080/temporadas
+
+##Obtener por ID
+curl http://localhost:8080/temporadas/ID_AQUI
+
+##Actualizar
+curl -X PUT http://localhost:8080/temporadas/ID_AQUI \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nombre_temp": "Clausura 2025 Actualizado",
+    "periodo": "2025-1",
+    "fecha_inicio": "2025-01-10T00:00:00Z",
+    "fecha_fin": "2025-06-10T00:00:00Z",
+    "auditoria_id": 1,
+    "activo": false
+  }'
+
+##Eliminar
+curl -X DELETE http://localhost:8080/temporadas/ID_AQUI

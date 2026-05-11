@@ -1,0 +1,16 @@
+##ROLES
+
+##Crear Rol
+curl -X POST http://localhost:8080/roles \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nombre_rol": "Administrador",
+    "descripcion": "Acceso total",
+    "auditoria_id": 1
+  }'
+
+
+##Listar Roles
+curl http://localhost:8080/roles
+
+

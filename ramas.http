@@ -1,0 +1,14 @@
+##Crear Rama
+curl -X POST http://localhost:8080/ramas \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nombre_rama": "Primera División",
+    "descripcion": "Categoría mayor",
+    "auditoria_id": 1
+  }'
+
+##Listar Ramas
+curl http://localhost:8080/ramas
+
+##Eliminar Rama
+curl -X DELETE http://localhost:8080/ramas/ID_AQUI
