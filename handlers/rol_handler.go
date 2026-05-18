@@ -8,6 +8,7 @@ import (
 	"api-mongo-go/config"
 	"api-mongo-go/utils"
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 )
 
 var rolService = services.RolService{}

@@ -80,3 +80,16 @@ func (s IntegranteService) Actualizar(id string, dto dto.IntegranteDTO) error {
 
 	return s.repo.Update(objectID, update)
 }
+
+func (s IntegranteService) Login(id string, secretPass string) (*models.IntegranteLiga, error) {
+    integrantes, err := s.repo.FindAll()
+    if err != nil {
+        return nil, errors.New("error al buscar integrantes")
+    }
+    for _, integrante := range integrantes {
+        if integrante.ID == id && integrante.SecretPass == secretPass && integrante.DeletedAt == nil {
+            return &integrante, nil
+        }
+    }
+    return nil, errors.New("credenciales inválidas")
+}

@@ -14,3 +14,40 @@ curl -X POST http://localhost:8080/integrantes \
   ##Listar Integrantes
   
 curl http://localhost:8080/integrantes
+
+
+##Login Integrante
+curl -X POST http://localhost:8080/integrantes/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id_integrante_liga": "juan123",
+    "secret_pass": "123456"
+  }'
+
+
+
+##Listar Integrantes (requiere JWT)
+curl -X GET http://localhost:8080/integrantes \
+  -H "Authorization: Bearer TU_TOKEN_AQUI"
+
+##Obtener Integrante por ID (requiere JWT)
+curl -X GET http://localhost:8080/integrantes/ID_AQUI \
+  -H "Authorization: Bearer TU_TOKEN_AQUI"
+
+##Actualizar Integrante (requiere JWT)
+curl -X PUT http://localhost:8080/integrantes/ID_AQUI \
+  -H "Authorization: Bearer TU_TOKEN_AQUI" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id_integrante_liga": "juan123",
+    "secret_pass": "nuevo123",
+    "nombre_completo": "Juan Pérez Actualizado",
+    "fotografia": "",
+    "fecha_nacimiento": "2000-01-01T00:00:00Z",
+    "auditoria_id": 1,
+    "activo": true
+  }'
+
+##Eliminar Integrante (requiere JWT)
+curl -X DELETE http://localhost:8080/integrantes/ID_AQUI \
+  -H "Authorization: Bearer TU_TOKEN_AQUI"

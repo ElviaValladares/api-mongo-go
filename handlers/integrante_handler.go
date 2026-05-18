@@ -2,11 +2,14 @@ package handlers
 
 import (
 	"net/http"
+	"time"
 
 	"api-mongo-go/dto"
 	"api-mongo-go/services"
 
 	"github.com/gin-gonic/gin"
+	  "github.com/golang-jwt/jwt/v5"
+
 )
 
 var integranteService = services.IntegranteService{}
@@ -88,4 +91,39 @@ func ActualizarIntegrante(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"mensaje": "Actualizada correctamente"})
+}
+
+
+var jwtSecret = []byte("mi_secret_super_seguro")
+
+func LoginIntegrante(c *gin.Context) {
+    var req struct {
+        ID         string `json:"id_integrante_liga"`
+        SecretPass string `json:"secret_pass"`
+    }
+    if err := c.ShouldBindJSON(&req); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "JSON inválido"})
+        return
+    }
+    integrante, err := integranteService.Login(req.ID, req.SecretPass)
+    if err != nil {
+        c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+        return
+    }
+    // Generar JWT
+    token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+        "user_id": integrante.ID,
+        "nombre":  integrante.NombreCompleto,
+        "exp":     time.Now().Add(time.Hour * 24).Unix(),
+    })
+    tokenString, err := token.SignedString(jwtSecret)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "No se pudo generar el token"})
+        return
+    }
+    c.JSON(http.StatusOK, gin.H{
+        "mensaje":    "Login exitoso",
+        "token":      tokenString,
+		"integrante": integrante,
+    })
 }

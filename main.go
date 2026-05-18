@@ -3,6 +3,7 @@ package main
 import (
 	"api-mongo-go/config"
 	"api-mongo-go/handlers"
+	"api-mongo-go/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -46,7 +47,8 @@ func main() {
 	auth.GET("/ramas/:id", handlers.ObtenerRamaPorID)
 	auth.PUT("/ramas/:id", handlers.ActualizarRama)
 
-	auth.POST("/integrantes", handlers.CrearIntegrante)
+	router.POST("/integrantes", handlers.CrearIntegrante)
+	router.POST("/integrantes/login", handlers.LoginIntegrante)
 	auth.GET("/integrantes", handlers.ListarIntegrantes)
 	auth.DELETE("/integrantes/:id", handlers.EliminarIntegrante)
 	auth.GET("/integrantes/:id", handlers.ObtenerIntegrantePorID)
@@ -55,5 +57,5 @@ func main() {
 
 
 
-	router.Run(":8080")
+	router.Run(":8081")
 }
