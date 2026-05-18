@@ -8,7 +8,6 @@ import (
 	"api-mongo-go/models"
 
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type IntegranteRepository struct{}
@@ -45,61 +44,45 @@ func (r IntegranteRepository) FindAll() ([]models.IntegranteLiga, error) {
 	return integrantes, err
 }
 
-
-
-func (r IntegranteRepository) SoftDelete(id primitive.ObjectID) error {
-
+func (r IntegranteRepository) SoftDelete(id string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-
 	collection := config.DB.Collection("integrantes")
-
 	now := time.Now()
-
 	_, err := collection.UpdateOne(ctx,
-		bson.M{"_id": id},
+		bson.M{"_id": id, "deleted_at": bson.M{"$exists": false}},
 		bson.M{"$set": bson.M{"deleted_at": now}},
 	)
-
 	return err
 }
 
+//
 
-func (r IntegranteRepository) FindByID(id primitive.ObjectID) (*models.IntegranteLiga, error) {
-
+func (r IntegranteRepository) FindByID(id string) (*models.IntegranteLiga, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-
 	collection := config.DB.Collection("integrantes")
-
 	var integrante models.IntegranteLiga
-
 	err := collection.FindOne(ctx, bson.M{
-		"_id": id,
+		"_id":        id,
 		"deleted_at": bson.M{"$exists": false},
 	}).Decode(&integrante)
-
 	if err != nil {
 		return nil, err
 	}
-
 	return &integrante, nil
 }
 
-func (r IntegranteRepository) Update(id primitive.ObjectID, update bson.M) error {
-
+func (r IntegranteRepository) Update(id string, update bson.M) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-
 	collection := config.DB.Collection("integrantes")
-
 	_, err := collection.UpdateOne(ctx,
 		bson.M{
-			"_id": id,
+			"_id":        id,
 			"deleted_at": bson.M{"$exists": false},
 		},
 		bson.M{"$set": update},
 	)
-
 	return err
 }
