@@ -14,9 +14,9 @@ func LoadConfig() *MongoConfig {
 	}*/
 	//localmente, para desarrollo, se puede usar un archivo .env para cargar las variables de entorno
 
-	usuario := os.Getenv("USUARIO_MONGO")
+	user := os.Getenv("USUARIO_MONGO")
 
-	if usuario == "" {
+	if user == "" {
 		log.Fatal("USUARIO_MONGO no definida")
 	}
 
@@ -27,7 +27,7 @@ func LoadConfig() *MongoConfig {
 	}
 
 	return &MongoConfig{
-		Usuario: usuario,
-		Pass:    pass,
+		User: user,
+		Pass: pass,
 	}
 }
