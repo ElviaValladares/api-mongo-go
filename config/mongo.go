@@ -10,12 +10,16 @@ import (
 
 var DB *mongo.Database
 
-func Connect() error {
+type MongoConfig struct {
+	Usuario string
+	Pass    string
+}
 
+func Connect(cfg MongoConfig) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	clientOptions := options.Client().ApplyURI("mongodb+srv://admin:vwU3jplO4ddQiSMV@cluster0.vp2nhjw.mongodb.net/?appName=Cluster0")
+	clientOptions := options.Client().ApplyURI("mongodb+srv://" + cfg.Usuario + ":" + cfg.Pass + "@cluster0.vp2nhjw.mongodb.net/?appName=Cluster0")
 
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {

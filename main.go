@@ -12,7 +12,7 @@ func main() {
 	config.InitLogger()
 	config.Logger.Info("Servidor iniciado")
 
-	err := config.Connect()
+	err := config.Connect(*config.LoadConfig())
 	if err != nil {
 		panic(err)
 	}
