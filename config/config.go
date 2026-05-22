@@ -3,17 +3,15 @@ package config
 import (
 	"log"
 	"os"
-
-	"github.com/joho/godotenv"
 )
 
 func LoadConfig() *MongoConfig {
 	//localmente, para desarrollo, se puede usar un archivo .env para cargar las variables de entorno
-	err := godotenv.Load()
+	/*err := godotenv.Load()
 
 	if err != nil {
 		log.Println(".env no encontrado")
-	}
+	}*/
 	//localmente, para desarrollo, se puede usar un archivo .env para cargar las variables de entorno
 
 	user := os.Getenv("USUARIO_MONGO")
