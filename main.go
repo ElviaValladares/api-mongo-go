@@ -5,6 +5,7 @@ import (
 	"api-mongo-go/handlers"
 	"api-mongo-go/middleware"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,6 +19,15 @@ func main() {
 	}
 
 	router := gin.Default()
+
+	// Configuración CORS: permitir todo origen
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
 
 	// grupo protegido
 	auth := router.Group("/")
@@ -50,5 +60,5 @@ func main() {
 	auth.GET("/integrantes/:id", handlers.ObtenerIntegrantePorID)
 	auth.PUT("/integrantes/:id", handlers.ActualizarIntegrante)
 
-	router.Run(":443")
+	router.Run(":8081")
 }
