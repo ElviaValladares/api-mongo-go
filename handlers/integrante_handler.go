@@ -8,29 +8,10 @@ import (
 	"api-mongo-go/services"
 
 	"github.com/gin-gonic/gin"
-	  "github.com/golang-jwt/jwt/v5"
-
+	"github.com/golang-jwt/jwt/v5"
 )
 
 var integranteService = services.IntegranteService{}
-
-func CrearIntegrante(c *gin.Context) {
-
-	var req dto.IntegranteDTO
-
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "JSON inválido"})
-		return
-	}
-
-	err := integranteService.Crear(req)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusCreated, gin.H{"mensaje": "Integrante creado"})
-}
 
 func ListarIntegrantes(c *gin.Context) {
 
@@ -42,7 +23,6 @@ func ListarIntegrantes(c *gin.Context) {
 
 	c.JSON(http.StatusOK, integrantes)
 }
-
 
 func EliminarIntegrante(c *gin.Context) {
 
@@ -57,9 +37,6 @@ func EliminarIntegrante(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"mensaje": "Integrante eliminada"})
 }
 
-
-
-
 func ObtenerIntegrantePorID(c *gin.Context) {
 
 	id := c.Param("id")
@@ -73,57 +50,73 @@ func ObtenerIntegrantePorID(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
-func ActualizarIntegrante(c *gin.Context) {
+var jwtSecret = []byte("mi_secret_super_seguro")
 
-	id := c.Param("id")
-
-	var req dto.IntegranteDTO
-
+func LoginIntegrante(c *gin.Context) {
+	var req struct {
+		ID         string `json:"id_integrante_liga"`
+		SecretPass string `json:"secret_pass"`
+	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "JSON inválido"})
 		return
 	}
-
-	err := integranteService.Actualizar(id, req)
+	integrante, err := integranteService.Login(req.ID, req.SecretPass)
 	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+	// Generar JWT
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"user_id": integrante.ID,
+		"nombre":  integrante.NombreCompleto,
+		"exp":     time.Now().Add(time.Hour * 24).Unix(),
+	})
+	tokenString, err := token.SignedString(jwtSecret)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "No se pudo generar el token"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"mensaje":    "Login exitoso",
+		"token":      tokenString,
+		"integrante": integrante,
+	})
+}
+
+func CrearIntegrante(c *gin.Context) {
+	var req dto.IntegranteDTO
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "JSON inválido"})
+		return
+	}
+	err := integranteService.Crear(req)
+	if err != nil {
+		if err.Error() == "El integrante debe tener al menos un rol" || len(req.Roles) == 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Debe asignar al menos un rol válido al integrante"})
+			return
+		}
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	c.JSON(http.StatusOK, gin.H{"mensaje": "Actualizada correctamente"})
+	c.JSON(http.StatusCreated, gin.H{"mensaje": "Integrante creado"})
 }
 
-
-var jwtSecret = []byte("mi_secret_super_seguro")
-
-func LoginIntegrante(c *gin.Context) {
-    var req struct {
-        ID         string `json:"id_integrante_liga"`
-        SecretPass string `json:"secret_pass"`
-    }
-    if err := c.ShouldBindJSON(&req); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "JSON inválido"})
-        return
-    }
-    integrante, err := integranteService.Login(req.ID, req.SecretPass)
-    if err != nil {
-        c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-        return
-    }
-    // Generar JWT
-    token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-        "user_id": integrante.ID,
-        "nombre":  integrante.NombreCompleto,
-        "exp":     time.Now().Add(time.Hour * 24).Unix(),
-    })
-    tokenString, err := token.SignedString(jwtSecret)
-    if err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "No se pudo generar el token"})
-        return
-    }
-    c.JSON(http.StatusOK, gin.H{
-        "mensaje":    "Login exitoso",
-        "token":      tokenString,
-		"integrante": integrante,
-    })
+func ActualizarIntegrante(c *gin.Context) {
+	id := c.Param("id")
+	var req dto.IntegranteDTO
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "JSON inválido"})
+		return
+	}
+	err := integranteService.Actualizar(id, req)
+	if err != nil {
+		if err.Error() == "El integrante debe tener al menos un rol" || len(req.Roles) == 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Debe asignar al menos un rol válido al integrante"})
+			return
+		}
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"mensaje": "Actualizada correctamente"})
 }

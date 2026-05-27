@@ -1,11 +1,12 @@
 ##ROLES
 
 ##Crear Rol
-curl -X POST http://localhost:8080/roles \
+curl -X POST https://api-mongo-go-production.up.railway.app/roles \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Nzk1MjI1MjgsIm5vbWJyZSI6IkVsdmlhIFZhbGxhZGFyZXMiLCJ1c2VyX2lkIjoiRWx2aWEifQ.r4KpDGq8VHmvlUT4vYCvdPQ8lWkFEiqy2CX8O2qlNLg" \
   -H "Content-Type: application/json" \
   -d '{
-    "nombre_rol": "Administrador",
-    "descripcion": "Acceso total",
+    "nombre_rol": "Entrenador",
+    "descripcion": "Acceso parcial a la API, solo puede ver información de equipos y jugadores",
     "auditoria_id": 1
   }'
 

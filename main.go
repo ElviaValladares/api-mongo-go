@@ -19,9 +19,6 @@ func main() {
 
 	router := gin.Default()
 
-	router.POST("/productos", handlers.CrearProducto)
-	router.GET("/productos", handlers.ObtenerProductos)
-
 	// grupo protegido
 	auth := router.Group("/")
 	auth.Use(middleware.JWTAuth())
@@ -46,9 +43,9 @@ func main() {
 	auth.GET("/ramas/:id", handlers.ObtenerRamaPorID)
 	auth.PUT("/ramas/:id", handlers.ActualizarRama)
 
+	router.GET("/integrantes", handlers.ListarIntegrantes)
 	router.POST("/integrantes", handlers.CrearIntegrante)
 	router.POST("/integrantes/login", handlers.LoginIntegrante)
-	auth.GET("/integrantes", handlers.ListarIntegrantes)
 	auth.DELETE("/integrantes/:id", handlers.EliminarIntegrante)
 	auth.GET("/integrantes/:id", handlers.ObtenerIntegrantePorID)
 	auth.PUT("/integrantes/:id", handlers.ActualizarIntegrante)
