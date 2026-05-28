@@ -60,5 +60,5 @@ func main() {
 	auth.GET("/integrantes/:id", handlers.ObtenerIntegrantePorID)
 	auth.PUT("/integrantes/:id", handlers.ActualizarIntegrante)
 
-	router.Run(":8081")
+	router.Run(":443")
 }
